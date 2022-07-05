@@ -1,0 +1,9 @@
+{
+  "component.tagSelect.expand": "Expand",
+  "component.tagSelect.collapse": "Collapse",
+  "component.tagSelect.all": "All",
+  "component.donation.title": "Donation",
+  "component.donation.otherAmount": "Other amount",
+  "component.donation.currentAmount": "Donation amount",
+  "component.donation.submit": "Donate now"
+}

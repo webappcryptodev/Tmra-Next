@@ -1,0 +1,404 @@
+# You can override the included template(s) by including variable overrides
+# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+stages:
+  - build
+  - test
+  - pre-publish
+  - publish
+  - post-publish
+  - deploy
+
+image: node:lts
+
+# Cache modules in between jobs
+cache:
+  key: $CI_COMMIT_REF_SLUG
+  paths:
+    - node_modules/
+    - .yarn/cache/
+    - .next/cache/
+
+.dev_rules:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "stack/dev" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event")'
+
+.qc_rules:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "stack/qc" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event")'
+
+.staging_rules:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "stack/staging" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event")'
+
+.prod_rules:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "stack/prod" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event")'
+
+# build-other:
+#   stage: build
+#   variables:
+#     APP_ENV: dev
+#   script:
+#     - export APP_VERSION="$(date +%Y.%m.%d)-${APP_ENV}_${CI_COMMIT_SHORT_SHA}"
+#     - echo "APP_ENV=$APP_ENV APP_VERSION=$APP_VERSION"
+#     - echo "APP_ENV=$APP_ENV" > build.env
+#     - echo "APP_VERSION=$APP_VERSION" >> build.env
+#     - cp -v src/configuration.$APP_ENV.ts src/configuration.ts
+#     - yarn --immutable
+#     - yarn build
+#   artifacts:
+#     reports:
+#       dotenv: build.env
+#     paths:
+#       - package.json
+#       - node_modules/
+#       - next-i18next.config.js
+#       - next.config.js
+#       - public/
+#       - .next/
+#     expire_in: 1 week
+#   rules:
+#     - if: '($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event") && $CI_COMMIT_BRANCH != "stack/dev" && $CI_COMMIT_BRANCH != "stack/qc" && $CI_COMMIT_BRANCH != "stack/staging" && $CI_COMMIT_BRANCH != "stack/prod"'
+
+# ------------------------------------- build ------------------------------------------
+
+'build other':
+  stage: build
+  needs: []
+  variables:
+    APP_ENV: dev
+  script:
+    - cp src/configuration.${APP_ENV}.ts src/configuration.ts
+    - yarn --immutable
+    - yarn build
+  artifacts:
+    paths:
+      - package.json
+      - node_modules/
+      - next-i18next.config.js
+      - next.config.js
+      - public/
+      - .next/
+    expire_in: 1 week
+  # environment:
+  #   name: review/$CI_COMMIT_REF_SLUG
+  rules:
+    - if: '($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event") && $CI_COMMIT_BRANCH != "stack/dev" && $CI_COMMIT_BRANCH != "stack/qc" && $CI_COMMIT_BRANCH != "stack/staging" && $CI_COMMIT_BRANCH != "stack/prod"'
+
+'build dev':
+  stage: build
+  needs: []
+  script:
+    - cp src/configuration.dev.ts src/configuration.ts
+    - yarn --immutable
+    - yarn build
+  artifacts:
+    paths:
+      - package.json
+      - node_modules/
+      - next-i18next.config.js
+      - next.config.js
+      - public/
+      - .next/
+    expire_in: 1 week
+  environment:
+    name: dev
+  rules:
+    - !reference [.dev_rules, rules]
+
+'build qc':
+  stage: build
+  needs: []
+  script:
+    - cp src/configuration.qc.ts src/configuration.ts
+    - yarn --immutable
+    - yarn build
+  artifacts:
+    paths:
+      - package.json
+      - node_modules/
+      - next-i18next.config.js
+      - next.config.js
+      - public/
+      - .next/
+    expire_in: 1 week
+  environment:
+    name: qc
+  rules:
+    - !reference [.qc_rules, rules]
+
+'build staging':
+  stage: build
+  needs: []
+  script:
+    - cp src/configuration.staging.ts src/configuration.ts
+    - yarn --immutable
+    - yarn build
+  artifacts:
+    paths:
+      - package.json
+      - node_modules/
+      - next-i18next.config.js
+      - next.config.js
+      - public/
+      - .next/
+    expire_in: 1 week
+  environment:
+    name: staging
+  rules:
+    - !reference [.staging_rules, rules]
+
+'build prod':
+  stage: build
+  needs: []
+  script:
+    - cp src/configuration.prod.ts src/configuration.ts
+    - yarn --immutable
+    - yarn build
+  artifacts:
+    paths:
+      - package.json
+      - node_modules/
+      - next-i18next.config.js
+      - next.config.js
+      - public/
+      - .next/
+    expire_in: 1 week
+  environment:
+    name: prod
+  rules:
+    - !reference [.prod_rules, rules]
+
+# ------------------------------------- test -------------------------------------------------
+
+# 👇 Adds Chromatic as a job
+chromatic_publish:
+  stage: test
+  script:
+    - yarn chromatic --project-token=$CHROMATIC_PROJECT_TOKEN
+  # 👇 Filters the execution to run only on the main branch.
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+
+# ------------------------------------- pre-publish ------------------------------------------
+
+# prepare-version-other:
+#   stage: pre-publish
+#   needs: []
+#   variables:
+#     APP_ENV: dev
+#   cache: []
+#   script:
+#     - export APP_VERSION=$(date +%Y.%m.%d)-${APP_ENV}_${CI_COMMIT_SHORT_SHA}
+#     - echo "APP_ENV=$APP_ENV APP_VERSION=$APP_VERSION"
+#     - echo "APP_ENV=$APP_ENV" > build.env
+#     - echo "APP_VERSION=$APP_VERSION" >> build.env
+#   artifacts:
+#     reports:
+#       dotenv: build.env
+#     expire_in: 1 week
+#   rules:
+#     - if: '($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event") && $CI_COMMIT_BRANCH != "stack/dev" && $CI_COMMIT_BRANCH != "stack/qc" && $CI_COMMIT_BRANCH != "stack/staging" && $CI_COMMIT_BRANCH != "stack/prod"'
+
+'prepare version':
+  stage: pre-publish
+  needs: []
+  cache: []
+  script:
+    - export APP_ENV=${CI_COMMIT_BRANCH/stack\//}
+    - export APP_VERSION=$(date +%Y.%m.%d)-${APP_ENV}_${CI_COMMIT_SHORT_SHA}
+    - echo "APP_ENV=$APP_ENV APP_VERSION=$APP_VERSION"
+    - echo "APP_ENV=$APP_ENV" > build.env
+    - echo "APP_VERSION=$APP_VERSION" >> build.env
+  artifacts:
+    reports:
+      dotenv: build.env
+    expire_in: 1 week
+  rules:
+    - !reference [.dev_rules, rules]
+    - !reference [.qc_rules, rules]
+    - !reference [.staging_rules, rules]
+    - !reference [.prod_rules, rules]
+
+# ------------------------------------- publish ------------------------------------------
+
+'publish to non-prod':
+  stage: publish
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: ['']
+  script:
+    # see https://github.com/GoogleContainerTools/kaniko/issues/1227
+    # https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
+    - mkdir -p /kaniko/.docker
+    # Requires AWS_REGION, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY in https://gitlab.com/lovia/lovia-billing/-/settings/ci_cd > Variables
+    # - echo "{\"credHelpers\":{\"${DOCKER_REGISTRY}\":\"ecr-login\"}, \"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --cache=true --cache-repo="${CI_REGISTRY_IMAGE}"
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --build-arg=APP_VERSION="${APP_VERSION}"
+      --destination "${CI_REGISTRY_IMAGE}:${APP_VERSION}"
+      --destination "${CI_REGISTRY_IMAGE}:${APP_ENV}"
+  #       --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
+  #       --destination "$DOCKER_REGISTRY/$APP_NAME:$CI_COMMIT_SHA"
+  rules:
+    - !reference [.dev_rules, rules]
+    - !reference [.qc_rules, rules]
+    - !reference [.staging_rules, rules]
+
+'publish to prod':
+  stage: publish
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: ['']
+  script:
+    # see https://github.com/GoogleContainerTools/kaniko/issues/1227
+    # https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
+    - mkdir -p /kaniko/.docker
+    # Requires AWS_REGION, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY in https://gitlab.com/lovia/lovia-billing/-/settings/ci_cd > Variables
+    # - echo "{\"credHelpers\":{\"${DOCKER_REGISTRY}\":\"ecr-login\"}, \"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --cache=true --cache-repo="${CI_REGISTRY_IMAGE}"
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --build-arg=APP_VERSION="${APP_VERSION}"
+      --destination "${CI_REGISTRY_IMAGE}:${APP_VERSION}"
+      --destination "${CI_REGISTRY_IMAGE}:${APP_ENV}"
+      --destination "${CI_REGISTRY_IMAGE}:latest"
+  #       --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
+  #       --destination "$DOCKER_REGISTRY/$APP_NAME:$CI_COMMIT_SHA"
+  rules:
+    - !reference [.prod_rules, rules]
+
+# ------------------------------------- trigger-deploy ------------------------------------------
+
+'trigger deploy to dev':
+  stage: deploy
+  needs: ['prepare version', 'build dev', 'publish to non-prod']
+  cache: []
+  image: node:lts
+  script:
+    - echo "Deploying version '$APP_VERSION' to environment '$APP_ENV' ..."
+    - >-
+      curl --fail --request POST
+      --form token=$CI_JOB_TOKEN
+      --form ref=main
+      --form "variables[APP_NAMES]=tmra-next"
+      --form "variables[APP_ENV]=$APP_ENV"
+      --form "variables[APP_VERSION]=$APP_VERSION"
+      "https://gitlab.com/api/v4/projects/26870237/trigger/pipeline"
+  environment:
+    name: dev
+    url: https://$APP_ENV.tmra.io
+  rules:
+    - !reference [.dev_rules, rules]
+
+'trigger deploy to qc':
+  stage: deploy
+  needs: ['prepare version', 'build qc', 'publish to non-prod']
+  cache: []
+  image: node:lts
+  script:
+    - echo "Deploying version '$APP_VERSION' to environment '$APP_ENV' ..."
+    - >-
+      curl --fail --request POST
+      --form token=$CI_JOB_TOKEN
+      --form ref=main
+      --form "variables[APP_NAMES]=tmra-next"
+      --form "variables[APP_ENV]=$APP_ENV"
+      --form "variables[APP_VERSION]=$APP_VERSION"
+      "https://gitlab.com/api/v4/projects/26870237/trigger/pipeline"
+  environment:
+    name: qc
+    url: https://$APP_ENV.tmra.io
+  rules:
+    - !reference [.qc_rules, rules]
+
+'trigger deploy to staging':
+  stage: deploy
+  needs: ['prepare version', 'build staging', 'publish to non-prod']
+  cache: []
+  image: node:lts
+  script:
+    - echo "Deploying version '$APP_VERSION' to environment '$APP_ENV' ..."
+    - >-
+      curl --fail --request POST
+      --form token=$CI_JOB_TOKEN
+      --form ref=main
+      --form "variables[APP_NAMES]=tmra-next"
+      --form "variables[APP_ENV]=$APP_ENV"
+      --form "variables[APP_VERSION]=$APP_VERSION"
+      "https://gitlab.com/api/v4/projects/26870237/trigger/pipeline"
+  environment:
+    name: staging
+    url: https://$APP_ENV.tmra.io
+  rules:
+    - !reference [.staging_rules, rules]
+
+'trigger deploy to prod':
+  stage: deploy
+  needs: ['prepare version', 'build prod', 'publish to prod']
+  cache: []
+  image: node:lts
+  script:
+    - echo "Deploying version '$APP_VERSION' to environment '$APP_ENV' ..."
+    - >-
+      curl --fail --request POST
+      --form token=$CI_JOB_TOKEN
+      --form ref=main
+      --form "variables[APP_NAMES]=tmra-next"
+      --form "variables[APP_ENV]=$APP_ENV"
+      --form "variables[APP_VERSION]=$APP_VERSION"
+      "https://gitlab.com/api/v4/projects/26870237/trigger/pipeline"
+  environment:
+    name: prod
+    url: https://www.tmra.io
+  rules:
+    - !reference [.prod_rules, rules]
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+# sast:
+#   stage: test
+#   # Disable cache for SAST - https://semgrep.dev/docs/troubleshooting/gitlab-sast/#solution-1-review-global-ci-job-configuration
+#   cache: {}
+
+# include:
+# - template: Security/SAST.gitlab-ci.yml
+
+# Semgrep - https://www.notion.so/hendyirawan/How-To-Add-Semgrep-To-A-GitLab-Project-0c98345d99c24d64876eb53ae6ed27e9
+semgrep:
+  image: returntocorp/semgrep-agent:v1
+  script: semgrep-agent
+  variables: {}
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+sonarqube-check:
+  stage: build
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: ['']
+  variables:
+    SONAR_USER_HOME: '${CI_PROJECT_DIR}/.sonar' # Defines the location of the analysis task cache
+    GIT_DEPTH: '0' # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: '${CI_JOB_NAME}'
+    paths:
+      - .sonar/cache
+  script:
+    - sonar-scanner
+  allow_failure: true
+  only:
+    - main # or the name of your main branch

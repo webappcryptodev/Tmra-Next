@@ -1,0 +1,67 @@
+fragment OrganizationInfo on Organization {
+  _id
+  username
+  name
+  organizationProfile
+  aboutPicture
+  favicon
+  defaultCurrency
+}
+
+query findOneOrganizationById($id: ObjectId!) {
+  organization(query: { _id: $id }) {
+    ...OrganizationInfo
+  }
+}
+
+query findOneOrganizationByUsername($username: String!) {
+  organization(query: { username: $username }) {
+    ...OrganizationInfo
+  }
+}
+
+query findManyOrganizationsByFeatured {
+  organizations(query: { featured: true }, sortBy: FEATUREDPOS_ASC) {
+    _id
+    username
+    name
+    organizationProfile
+    aboutPicture
+    favicon
+  }
+}
+
+query getOrganizationAppearance($_id: ObjectId!) {
+  nonprofitAppearance(query: { _id: $_id }) {
+    _id
+    primaryColor
+    secondaryColor
+    logo
+    themesColor
+    usePallete
+    headerAndFooter
+    accent
+    lButton
+    ourStory
+    whyShouldWe
+    peopleSay
+    mainImageUrl
+    secondaryImage
+    eventImagesUrl1
+    eventImagesUrl2
+    eventImagesUrl3
+    detailStory1
+    detailStory2
+    detailStory3
+    videoUrl
+    whySupportUs1
+    whySupportUs2
+    whySupportUs3
+    favIcon
+  }
+  organization(query: { _id: $_id }) {
+    _id
+    username
+    name
+  }
+}

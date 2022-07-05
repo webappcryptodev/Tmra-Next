@@ -1,0 +1,9 @@
+{
+  "component.tagSelect.expand": "Expand",
+  "component.tagSelect.collapse": "Collapse",
+  "component.tagSelect.all": "All",
+  "component.donation.title": "يتبرع",
+  "component.donation.otherAmount": "كمية اخرى",
+  "component.donation.currentAmount": "مبلغ التبرع",
+  "component.donation.submit": "تبرع الآن"
+}

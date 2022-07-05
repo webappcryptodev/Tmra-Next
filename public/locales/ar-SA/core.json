@@ -1,0 +1,25 @@
+{
+    "hello": "Merhaba",
+    "greet": "Merhaba, {{name}}!",
+    "world": "Dünya",
+    "common.back": "خلف",
+    "documentation": "Dökümantasyona Git",
+    "language": {
+        "tr": "🇹🇷 Türkçe",
+        "en": "🇺🇸 English"
+    },
+    "core.personal": "شخصي",
+    "core.organization": "منظمة",
+    "core.platform": "برنامج",
+    "core.section.general": "عام",
+    "core.section.platform": "برنامج",
+    "core.menu.overview": "ملخص",
+    "core.menu.users": "المستخدمون",
+    "core.menu.notifications": "إشعارات",
+    "core.menu.activity": "نشاط",
+    "core.menu.settings": "إعدادات",
+    "core.delete": "حذف",
+    "core.cancel": "يلغي",
+    "core.remove": "إزالة",
+    "core.delete.confirm.title": "هل تريد حذف {{docType}} \"{{docTitle}}\"؟"
+  }

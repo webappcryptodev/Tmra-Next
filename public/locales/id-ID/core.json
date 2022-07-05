@@ -1,0 +1,25 @@
+{
+    "hello": "Hello",
+    "greet": "Hello, {{name}}!",
+    "world": "World",
+    "common.back": "Kembali",
+    "documentation": "Go To Documentation",
+    "language": {
+        "tr": "🇹🇷 Türkçe",
+        "en": "🇺🇸 English"
+    },
+    "core.personal": "Pribadi",
+    "core.organization": "Organisasi",
+    "core.platform": "Platform",
+    "core.section.general": "Umum",
+    "core.section.platform": "Platform",
+    "core.menu.overview": "Ikhtisar",
+    "core.menu.users": "Pengguna",
+    "core.menu.notifications": "Notifikasi",
+    "core.menu.activity": "Aktivitas",
+    "core.menu.settings": "Setelan",
+    "core.delete": "Hapus",
+    "core.cancel": "Batal",
+    "core.remove": "Hapus",
+    "core.delete.confirm.title": "Hapus {{docType}} \"{{docTitle}}\"?"
+  }

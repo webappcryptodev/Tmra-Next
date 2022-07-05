@@ -1,0 +1,29 @@
+{
+    "hello": "Hello",
+    "greet": "Hello, {{name}}!",
+    "world": "World",
+    "common.back": "Back",
+    "documentation": "Go To Documentation",
+    "language": {
+        "tr": "🇹🇷 Türkçe",
+        "en": "🇺🇸 English"
+    },
+    "core.name": "Name",
+    "core.title": "Title",
+    "core.description": "Description",
+    "core.images": "Images",
+    "core.personal": "Personal",
+    "core.organization": "Organization",
+    "core.platform": "Platform",
+    "core.section.general": "General",
+    "core.section.platform": "Platform",
+    "core.menu.overview": "Overview",
+    "core.menu.users": "Users",
+    "core.menu.notifications": "Notifications",
+    "core.menu.activity": "Activity",
+    "core.menu.settings": "Settings",
+    "core.delete": "Delete",
+    "core.cancel": "Cancel",
+    "core.remove": "Remove",
+    "core.delete.confirm.title": "Delete {{docType}} \"{{docTitle}}\"?"
+  }

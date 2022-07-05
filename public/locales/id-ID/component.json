@@ -1,0 +1,9 @@
+{
+  "component.tagSelect.expand": "Perluas",
+  "component.tagSelect.collapse": "Lipat",
+  "component.tagSelect.all": "Semua",
+  "component.donation.title": "Donasi",
+  "component.donation.otherAmount": "Jumlah lain",
+  "component.donation.currentAmount": "Jumlah donasi",
+  "component.donation.submit": "Donasi sekarang"
+}

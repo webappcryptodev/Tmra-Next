@@ -1,0 +1,27 @@
+{
+    "gift": {
+        "general": "General",
+        "parents": "Parents",
+        "newborn": "New Born",
+        "marriage": "Wedding",
+        "graduation": "Graduation",
+        "healing": "Healing",
+        "gift": "Gift Type",
+        "yourname": "Your name",
+        "beneficiaryname": "Beneficiary name",
+        "beneficiarynumber": "Beneficiary Phone Number",
+        "inputnumber": "Input number",
+        "copysms": "Copy to SMS",
+        "previous": "Previous",
+        "next": "Next",
+        "giftedname": "The name of the gifted",
+        "giftednumber": "The giver's mobile number",
+        "donationsummary": "Gifting Summary",
+        "pay": "Pay now",
+        "step": "Step",
+        "step1": "Choose the gift type",
+        "step2": "Enter Data",
+        "step3": "Summary",
+        "error": "Please fill the form"
+    }
+}

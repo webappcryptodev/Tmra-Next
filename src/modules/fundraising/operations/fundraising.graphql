@@ -1,0 +1,210 @@
+# Find multiple published campaigns of an Organization.
+query findManyPublishedCampaignsByOrganizationId($organizationId: ObjectId!) {
+  campaigns(query: { organizationId: $organizationId, isPublished: "Y" }) {
+    _id
+    organizationId
+    title
+    createdAt
+    updatedAt
+    creatorUserId
+    updaterUserId
+    description
+    images
+    coverImage
+    coverImageIndex
+    islamCharityType
+    methods
+    currencyCode
+    amountProgress
+    amountTarget
+    campaignDescription
+    campaignImage
+    campaignName
+    campaignType
+    organizationId
+    ownerUserId
+    totalDonation
+    donorReached
+    isPublished
+  }
+}
+# Find multiple campaigns of an Organization.
+query findManyCampaignsByOrganizationId($organizationId: ObjectId!) {
+  campaigns(query: { organizationId: $organizationId }) {
+    _id
+    organizationId
+    title
+    createdAt
+    updatedAt
+    creatorUserId
+    updaterUserId
+    description
+    images
+    coverImage
+    coverImageIndex
+    islamCharityType
+    methods
+    currencyCode
+    amountProgress
+    amountTarget
+    campaignDescription
+    campaignImage
+    campaignName
+    campaignType
+    organizationId
+    ownerUserId
+    totalDonation
+    donorReached
+    isPublished
+  }
+}
+
+# Find a single campaign by Organization ID and Campaign ID.
+query findOneCampaignById($organizationId: ObjectId!, $campaignId: ObjectId!) {
+  campaign(query: { organizationId: $organizationId, _id: $campaignId }) {
+    _id
+    organizationId
+    title
+    createdAt
+    updatedAt
+    creatorUserId
+    updaterUserId
+    description
+    images
+    coverImage
+    coverImageIndex
+    islamCharityType
+    methods
+    currencyCode
+    amountTarget
+    campaignDescription
+    campaignImage
+    campaignName
+    campaignType
+    organizationId
+    ownerUserId
+    totalDonation
+    donorReached
+    isPublished
+  }
+}
+
+# Insert a new campaign.
+mutation insertCampaign(
+  $organizationId: ObjectId!
+  $title: String!
+  $createdAt: DateTime
+  $creatorUserId: String!
+  $description: String!
+  $islamCharityType: CampaignIslamCharityType!
+  $methods: [String]
+  $currencyCode: String!
+  $amountTarget: Decimal!
+  $marketingPlanEnabled: Boolean
+  $marketingPlan: String
+  $isPublished: String
+) {
+  insertOneCampaign(
+    data: {
+      organizationId: $organizationId
+      title: $title
+      createdAt: $createdAt
+      updatedAt: $createdAt
+      creatorUserId: $creatorUserId
+      updaterUserId: $creatorUserId
+      description: $description
+      islamCharityType: $islamCharityType
+      methods: $methods
+      currencyCode: $currencyCode
+      amountProgress: "0"
+      amountTarget: $amountTarget
+      images: []
+      marketingPlanEnabled: $marketingPlanEnabled
+      marketingPlan: $marketingPlan
+      isPublished: $isPublished
+    }
+  ) {
+    _id
+  }
+}
+
+# Upload image (e.g. for a campaign)
+mutation uploadImage(
+  $imageName: String!
+  $imageUrl: String!
+  $imagePrefix: String!
+  $imageExtension: String!
+  $fullName: String!
+  $currentPhoto: String!
+) {
+  uploadImage(
+    input: {
+      imageUrl: $imageUrl
+      imageName: $imageName
+      imagePrefix: $imagePrefix
+      imageExtension: $imageExtension
+      fullName: $fullName
+      currentPhoto: $currentPhoto
+    }
+  ) {
+    response
+    path
+  }
+}
+
+# Update a campaign's images.
+mutation updateCampaignImages(
+  $_id: ObjectId!
+  $images: [String]
+  $coverImage: String
+  $coverImageIndex: Int
+) {
+  updateOneCampaign(
+    query: { _id: $_id }
+    set: { images: $images, coverImage: $coverImage, coverImageIndex: $coverImageIndex }
+  ) {
+    _id
+    images
+    coverImage
+    coverImageIndex
+  }
+}
+
+# Update a campaign's details.
+mutation updateCampaignDetail(
+  $organizationId: ObjectId!
+  $campaignId: ObjectId!
+  $updatedAt: DateTime
+  $title: String!
+  $description: String!
+  $islamCharityType: CampaignIslamCharityType!
+  $methods: [String]
+  $amountTarget: Decimal!
+  $marketingPlanEnabled: Boolean
+  $marketingPlan: String
+  $isPublished: String
+) {
+  updateOneCampaign(
+    query: { organizationId: $organizationId, _id: $campaignId }
+    set: {
+      updatedAt: $updatedAt
+      title: $title
+      description: $description
+      islamCharityType: $islamCharityType
+      methods: $methods
+      amountTarget: $amountTarget
+      marketingPlanEnabled: $marketingPlanEnabled
+      marketingPlan: $marketingPlan
+      isPublished: $isPublished
+    }
+  ) {
+    _id
+  }
+}
+
+# Purge a campaign entirely.
+mutation purgeCampaign($organizationId: ObjectId!, $campaignId: ObjectId!) {
+  deleteOneCampaign(query: { organizationId: $organizationId, _id: $campaignId }) {
+    _id
+  }
+}

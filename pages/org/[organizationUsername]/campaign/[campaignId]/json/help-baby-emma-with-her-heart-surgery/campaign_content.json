@@ -1,0 +1,29 @@
+{
+  "story": "<div class='text'><div style='height: 60vh;position: relative;overflow: hidden;background-color: #999;'><div style='background-position: 50%;background-repeat: no-repeat;background-size: 200%;filter: blur(10px);opacity: 0.8;position: absolute;bottom: 0;top: 0;left: 0;right: 0;z-index: 0;background-image: url(https://res.cloudinary.com/dmajhtvmd/image/upload/w_1200,c_scale/q_auto/fkwrbremlxwuwtmyjv6r.jpg);'></div><div style='background-position: 50%;background-repeat: no-repeat;background-size: 200%;filter: blur(10px);opacity: 0.8;position: absolute;bottom: 0;top: 0;left: 0;right: 0;z-index: 0;opacity: 1;filter: none;background-size: contain;background-image: url(https://res.cloudinary.com/dmajhtvmd/image/upload/w_1000,c_scale/l_giveasia_watermark,w_0.3,fl_relative,e_anti_removal:20,g_north_east,x_0,y_0/q_auto/ng8tntdf9hvmagm3kfuq.jpg);'></div></div> <br /> <iframe style='border: 0' width='100%' height='560' src='https://www.youtube.com/embed/RAEXMic9Z9w' title='YouTube video player frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe><br />This event is raising funds for Rise Against Hunger Philippines (RAHP), a member of the global confederation of Rise Against Hunger which is an international hunger relief organization that coordinates the distribution of food and other life-saving aid around the world. RAHP operates the first foodbank in the country. It is a member of the Global Foodbanking Network and the Association of Asian Foodbanks.<br><br>Each meal for a person in need costs PHP 25. Let's fundraise to support hunger alleviation in the Philippines!</div>",
+  "updates": [
+    {
+      "sender": "Hannah Zucker",
+      "img": null,
+      "time": "6 days ago",
+      "content": "Bless those people who have nothing to eat. Food is a source of joy, strength, and resilience. We all need to give back to our family and community. One way we can be truly happy is by helping one another. <div style='height: 60vh;position: relative;overflow: hidden;background-color: #999;'><div style='background-position: 50%;background-repeat: no-repeat;background-size: 200%;filter: blur(10px);opacity: 0.8;position: absolute;bottom: 0;top: 0;left: 0;right: 0;z-index: 0;background-image: url(https://res.cloudinary.com/dmajhtvmd/image/upload/w_1200,c_scale/q_auto/fkwrbremlxwuwtmyjv6r.jpg);'></div><div style='background-position: 50%;background-repeat: no-repeat;background-size: 200%;filter: blur(10px);opacity: 0.8;position: absolute;bottom: 0;top: 0;left: 0;right: 0;z-index: 0;opacity: 1;filter: none;background-size: contain;background-image: url(https://res.cloudinary.com/dmajhtvmd/image/upload/w_1200,c_scale/q_auto/fkwrbremlxwuwtmyjv6r.jpg);'></div></div>"
+    }
+  ],
+  "activities": [
+    {
+      "text": "Bless those people who have nothing to eat. Food is a source of joy, strength, and resilience. We all need to give back to our family and community. One way we can be truly happy is by helping one another.",
+      "img": null,
+      "sender": "Ace and Rox Pabalan",
+      "time": "6 days ago",
+      "amount": "SGD 27.33"
+    }
+  ],
+  "top_donor": [
+    {
+      "text": "Bless those people who have nothing to eat. Food is a source of joy, strength, and resilience. We all need to give back to our family and community. One way we can be truly happy is by helping one another.",
+      "img": null,
+      "sender": "Ace and Rox Pabalan",
+      "time": "6 days ago",
+      "amount": "SGD 27.33"
+    }
+  ]
+}
